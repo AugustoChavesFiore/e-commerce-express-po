@@ -25,12 +25,13 @@ const productSchema = new Schema({
         required: true,
         trim: true,
     },
-    //stock debe ser una referencia a la coleccion de stock
+    
     stock: {
-        type: Schema.Types.ObjectId,
-        ref: 'Stock',
-        required: true
-    }
+        type: Number,
+        required: true,
+        trim: true,
+        default: 0
+    },
 
 });
 

@@ -8,6 +8,9 @@ export class UserController {
     handleError = (error, res) => {
 
         console.log(`error: ${error}`);
+        if (error.code === 11000) {
+            return res.status(400).json({ error: 'User already exists' });
+        }
         return res.status(500).json({ error: 'Internal Server Error' });
     };
 
@@ -24,6 +27,7 @@ export class UserController {
         try {
             const { id } = req.params;
             const user = await this.userService.getUser(id);
+            if (!user) return res.status(404).json({ error: 'User not found' });
             return res.json(user);
         } catch (error) {
             this.handleError(error, res);
@@ -33,7 +37,7 @@ export class UserController {
     createUser = async (req, res) => {
         try {
             const user = req.body;
-            const newUser = await this.userService.createUser(user);
+            const newUser = await this.userService.createUser(user);           
             return res.status(201).json(newUser);
         } catch (error) {
             this.handleError(error, res);
@@ -56,6 +60,7 @@ export class UserController {
             const { id } = req.params;
             const { role } = req.body;
             const user = await this.userService.changeRole(id, role);
+            if (!user) return res.status(404).json({ error: 'User not found' });
             return res.json(user);
         } catch (error) {
             this.handleError(error, res);

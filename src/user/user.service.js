@@ -22,7 +22,7 @@ export class UserServices {
             user.password = await Crypt.hash(user.password);
         };
         const update = await this.userModel.updateOne({ _id: id }, { $set: user });
-        if (user.affected === 0) {
+        if (user.modifiedCount === 0) {
             throw new Error('User not found');
         };
         return update;
@@ -30,17 +30,15 @@ export class UserServices {
 
     async deleteUser(id) {
         const user = await this.userModel.deleteOne({ _id: id });
-        if (user.affected === 0) {
+        if (user.deletedCount === 0) {
             throw new Error('User not found');
         };
         return user;
     };
 
     async changeRole(id, role) {
-        const user = await this.user.findByIdAndUpdate(id, { role: role }, { new: true });
-        if (!user) {
-            throw new Error('User not found');
-        }
+        const user = await this.user.updateOne(id, { role: role }, { new: true });
+        if (user.modifiedCount === 0) throw new Error('User not found');
         return user;
-    }
+    };
 };
