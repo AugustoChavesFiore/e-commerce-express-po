@@ -1,5 +1,5 @@
 import { UserModel } from './user.model.js';
-
+import { Crypt } from '../common/configs/bcrypt.js';
 
 export class UserServices {
     constructor() {
@@ -12,10 +12,14 @@ export class UserServices {
         return await this.userModel.findOne({ _id: id });
     }
     async createUser(user) {
+        user.password = await Crypt.hash(user.password);
         const userCreated = new this.userModel(user);
         return await userCreated.save();
     }
     async updateUser(id, user) {
+        if (user.password) {
+            user.password = await Crypt.hash(user.password);
+        };
         const update = await this.userModel.updateOne({ _id: id }, { $set: user });
         if (user.affected === 0) {
             throw new Error('User not found');
