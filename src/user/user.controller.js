@@ -51,6 +51,17 @@ export class UserController {
         }
     };
 
+    changeRole = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { role } = req.body;
+            const user = await this.userService.changeRole(id, role);
+            return res.json(user);
+        } catch (error) {
+            this.handleError(error, res);
+        }
+    };
+
     deleteUser = async (req, res) => {
         try {
             const { id } = req.params;
